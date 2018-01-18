@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Django REST and React App</title>
+    <link rel="stylesheet" href="{% static 'posts/css/bootstrap.min.css' %}" type="text/css"/>
+    <script type="text/javascript" src="{% static 'posts/js/jquery-3.2.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'posts/js/bootstrap.min.js' %}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obj in object_list %}
+                        <tr>
+                            <td>{{ obj.name }}</td>
+                            <td>{{ obj.message }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label> {{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
