@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'posts',
     'rest_framework',
+    'webpack_loader',
 ]
 
 MIDDLEWARE = [
@@ -123,8 +124,20 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "posts", "static"),
+    os.path.join(BASE_DIR, "frontend", "static"),
+]
+
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     )
+}
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': "frontend/js/",
+        'STATS_FILE': os.path.join(BASE_DIR, "frontend", 'webpack-stats.json'),
+    }
 }
