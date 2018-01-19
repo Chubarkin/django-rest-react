@@ -12,24 +12,8 @@
 <body>
     <div class="container">
         <div class="row">
-            <div id="title"></div>
+            <div id="react-table"></div>
             {% render_bundle 'main' %}
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Message</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for obj in object_list %}
-                        <tr>
-                            <td>{{ obj.name }}</td>
-                            <td>{{ obj.message }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
             <form method="POST">
                 {% csrf_token %}
                 {% for field in form %}

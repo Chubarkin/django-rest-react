@@ -5,4 +5,4 @@ from posts.models import Post
 class PostSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Post
-        fields = ('name', 'message')
+        fields = ('name', 'message', 'id')
