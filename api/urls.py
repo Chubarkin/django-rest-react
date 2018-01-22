@@ -18,5 +18,5 @@ from django.conf.urls import url
 from api.views import PostJSONView
 
 urlpatterns = [
-    url(r'^posts/', PostJSONView.as_view({'get': 'list'}))
+    url(r'^posts/', PostJSONView.as_view({'get': 'list', 'post': 'create'}))
     ]
