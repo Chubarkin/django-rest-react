@@ -1,47 +1,37 @@
-import React from 'react';
-
-
-export default class Service extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            error: null,
-            isLoaded: false,
-            items: []
-        };
+export default class Service {
+    constructor(url) {
+        this.url = url;
     }
 
-    componentDidMount() {
-        fetch(this.props.url)
+    get(successCallback, errorCallback) {
+        fetch(this.url, {method: 'get'})
             .then(res => res.json())
             .then(
                 (result) => {
-                    this.setState({
-                        isLoaded: true,
-                        items: result
-                    });
+                    successCallback(result);
                 },
                 (error) => {
-                    this.setState({
-                        isLoaded: true,
-                        error
-                    });
+                    errorCallback(error);
                 }
             )
     }
 
-    render() {
-        const { error, isLoaded, items } = this.state;
-        const SuccessComponent = this.props.successComponent;
-        const args = this.props.successComponentArgs;
-        if (error) {
-            return <div>Error: {error.message}</div>;
-        } else if (!isLoaded) {
-            return <div>Loading...</div>;
-        } else {
-            return (
-                <SuccessComponent {...args} items={items} />
-            );
-        }
+    post(data, successCallback, errorCallback) {
+         fetch(this.url, {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            method: 'post',
+            body: JSON.stringify(data)})
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    successCallback();
+                },
+                (error) => {
+                    errorCallback(error);
+                }
+            )
     }
 }
