@@ -20598,10 +20598,13 @@ var Form = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (Form.__proto__ || Object.getPrototypeOf(Form)).call(this, props));
 
         _this.state = {
-            name: '',
-            message: ''
+            name: { value: '', error: '' },
+            message: { value: '', error: '' }
         };
         _this.update = _this.update.bind(_this);
+        _this.handleNameChange = _this.handleNameChange.bind(_this);
+        _this.handleMessageChange = _this.handleMessageChange.bind(_this);
+        _this.handleErrors = _this.handleErrors.bind(_this);
 
         return _this;
     }
@@ -20610,7 +20613,7 @@ var Form = function (_React$Component) {
         key: 'submitForm',
         value: function submitForm(e) {
             e.preventDefault();
-            this.props.service.post(this.state, this.update, console.log);
+            this.props.service.post({ name: this.state.name.value, message: this.state.message.value }, this.update, this.handleErrors);
         }
     }, {
         key: 'update',
@@ -20619,42 +20622,82 @@ var Form = function (_React$Component) {
             this.clearFields();
         }
     }, {
+        key: 'handleErrors',
+        value: function handleErrors(data) {
+            if (!!data.name) {
+                var state = Object.assign(this.state.name);
+                state.error = data.name[0];
+                this.setState({ name: state });
+            }
+            if (!!data.message) {
+                var _state = Object.assign(this.state.message);
+                _state.error = data.message[0];
+                this.setState({ message: _state });
+            }
+        }
+    }, {
         key: 'clearFields',
         value: function clearFields() {
-            this.setState({ name: '', message: '' });
+            var name = Object.assign(this.state.name);
+            name.value = '';
+            name.error = '';
+            var message = Object.assign(this.state.message);
+            message.value = '';
+            message.error = '';
+            this.setState({ name: name, message: message });
+        }
+    }, {
+        key: 'handleNameChange',
+        value: function handleNameChange(e) {
+            var formField = Object.assign(this.state.name);
+            formField.value = e.target.value;
+            if (formField.value.length > 0) formField.error = '';
+            this.setState({ field: formField });
+        }
+    }, {
+        key: 'handleMessageChange',
+        value: function handleMessageChange(e) {
+            var formField = Object.assign(this.state.message);
+            formField.value = e.target.value;
+            if (formField.value.length > 0) formField.error = '';
+            this.setState({ field: formField });
         }
     }, {
         key: 'render',
         value: function render() {
-            var _this2 = this;
-
             return _react2.default.createElement(
                 'form',
                 { method: 'POST' },
                 _react2.default.createElement(_djangoReactCsrftoken2.default, null),
                 _react2.default.createElement(
                     'div',
-                    { className: 'form-group' },
+                    { className: "form-group" + (!!this.state.name.error ? " has-error" : '') },
                     _react2.default.createElement(
                         'label',
                         null,
                         ' Name'
                     ),
-                    _react2.default.createElement('input', { type: 'text', name: 'name', id: 'id_name', className: 'form-control', required: true, maxLength: '50', onChange: function onChange(e) {
-                            _this2.setState({ name: e.target.value });
-                        }, value: this.state.name })
+                    _react2.default.createElement('input', { type: 'text', name: 'name', id: 'id_name', className: 'form-control', required: true, maxLength: '50', onChange: this.handleNameChange, value: this.state.name.value }),
+                    this.state.name.error.length > 0 && _react2.default.createElement(
+                        'span',
+                        { className: 'help-block' },
+                        this.state.name.error
+                    )
                 ),
                 _react2.default.createElement(
                     'div',
-                    { className: 'form-group' },
+                    { className: "form-group" + (!!this.state.message.error ? " has-error" : '') },
                     _react2.default.createElement(
                         'label',
                         null,
                         ' Message'
                     ),
-                    _react2.default.createElement('textarea', { className: 'message form-control', rows: '10', maxLength: '300', id: 'id_message', required: true, cols: '40', onChange: function onChange(e) {
-                            _this2.setState({ message: e.target.value });
-                        }, value: this.state.message })
+                    _react2.default.createElement('textarea', { className: 'message form-control', rows: '10', maxLength: '300', id: 'id_message', required: true, cols: '40', onChange: this.handleMessageChange, value: this.state.message.value }),
+                    this.state.message.error.length > 0 && _react2.default.createElement(
+                        'span',
+                        { className: 'help-block' },
+                        this.state.message.error
+                    )
                 ),
                 _react2.default.createElement(
                     'button',
@@ -24848,49 +24891,14 @@ var Service = function () {
                     'Content-Type': 'application/json'
                 },
                 method: 'post',
-                body: JSON.stringify(data) }).then(function (res) {
-                return res.json();
-            }).then(function (result) {
-                successCallback();
+                body: JSON.stringify(data) }).then(function (response) {
+                response.json().then(function (result) {
+                    response.ok ? successCallback() : errorCallback(result);
+                });
             }, function (error) {
-                errorCallback(error);
+                console.log('Unexpected error: ' + error);
             });
         }
-
-        //    componentDidMount() {
-        //        fetch(this.props.url)
-        //            .then(res => res.json())
-        //            .then(
-        //                (result) => {
-        //                    this.setState({
-        //                        isLoaded: true,
-        //                        items: result
-        //                    });
-        //                },
-        //                (error) => {
-        //                    this.setState({
-        //                        isLoaded: true,
-        //                        error
-        //                    });
-        //                }
-        //            )
-        //    }
-        //
-        //    render() {
-        //        const { error, isLoaded, items } = this.state;
-        //        const SuccessComponent = this.props.successComponent;
-        //        const args = this.props.successComponentArgs;
-        //        if (error) {
-        //            return <div>Error: {error.message}</div>;
-        //        } else if (!isLoaded) {
-        //            return <div>Loading...</div>;
-        //        } else {
-        //            return (
-        //                <SuccessComponent {...args} items={items} />
-        //            );
-        //        }
-        //    }
-
     }]);
 
     return Service;

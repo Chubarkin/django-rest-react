@@ -24,13 +24,15 @@ export default class Service {
             },
             method: 'post',
             body: JSON.stringify(data)})
-            .then(res => res.json())
             .then(
-                (result) => {
-                    successCallback();
+                (response) => {
+					response.json()
+					.then((result) => {
+						response.ok ? successCallback() : errorCallback(result);
+                    });
                 },
                 (error) => {
-                    errorCallback(error);
+                    console.log('Unexpected error: ' + error);
                 }
             )
     }
